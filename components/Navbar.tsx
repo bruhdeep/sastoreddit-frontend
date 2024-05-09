@@ -1,9 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { IoIosNotifications } from "react-icons/io";
 
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+
 const Navbar = () => {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    Cookies.remove("userId");
+    Cookies.remove("accessToken");
+    router.push("/login");
+  };
+
   return (
     <div className="text-black">
       <div className="navbar bg-base-100">
@@ -54,16 +67,13 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a className="justify-between">
-                  Profile
-                  <span className="badge">New</span>
-                </a>
+                <a className="justify-between">Profile</a>
               </li>
+
               <li>
-                <a>Settings</a>
-              </li>
-              <li>
-                <a>Logout</a>
+                <button onClick={handleLogout} className="justify-between">
+                  Logout
+                </button>
               </li>
             </ul>
           </div>

@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 "use client";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
 const Login = () => {
@@ -50,8 +50,13 @@ const Login = () => {
         const data = await response.json();
         console.log(data);
 
-        Cookies.set("user", data, { expires: 7 });
-        redirect("/dashboard");
+        const userId = data.userID;
+        const token = data.accessToken;
+
+        Cookies.set("userId", userId);
+        Cookies.set("accessToken", token);
+
+        router.push("/post");
       }
     } catch (error) {
       console.error("An error occurred:", error);
