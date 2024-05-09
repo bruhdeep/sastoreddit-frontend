@@ -1,12 +1,17 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
+import { BiUpvote, BiDownvote } from "react-icons/bi";
+
 const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
 
@@ -39,6 +44,7 @@ const PostList = () => {
       );
 
       setImageUrl(response.data.secure_url);
+      toast.success("Image uploaded successfully");
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -46,15 +52,16 @@ const PostList = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const Title = e.target[0].value;
+    const Title = title;
     console.log(Title);
-    const Description = e.target[1].value;
+    const Description = description;
     console.log(Description);
     const ImageUrl = imageUrl;
     console.log(ImageUrl);
+    const userId = "6b4813d4-2965-4220-ac50-06ebcc251751";
 
     try {
-      const res = await fetch("/api/register", {
+      const res = await fetch(process.env.BASE_URL + "/forum/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,13 +70,15 @@ const PostList = () => {
           Title,
           Description,
           ImageUrl,
+          userId,
         }),
       });
       if (res.status === 400) {
-        setError("This email is already registered");
+        setError("Error, try again");
       }
       if (res.status === 200) {
         setError("");
+        toast.success("Post created successfully");
       }
     } catch (error) {
       setError("Error, try again");
@@ -97,7 +106,7 @@ const PostList = () => {
   }, []);
 
   return (
-    <div className="p-10">
+    <div className="">
       <div>
         {/* Open the modal using document.getElementById('ID').showModal() method */}
         <button
@@ -112,31 +121,37 @@ const PostList = () => {
         </button>
         <dialog id="createpost" className="modal">
           <div className="modal-box">
-            <label className="input input-bordered flex items-center gap-2">
-              <input type="text" className="grow" placeholder="Title" />
-            </label>
-            <br />
-            <textarea
-              className="textarea textarea-bordered w-full"
-              placeholder="Description"
-            ></textarea>
-            <br />
-            <div className="flex gap-2">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <input
-                type="file"
-                accept="image/*"
-                className="file-input file-input-bordered w-full"
-                onChange={handleFileChange}
+                type="text"
+                placeholder="Title"
+                className="input input-bordered w-full"
+                onChange={(e) => setTitle(e.target.value)}
               />
-              <button className="btn btn-primary" onClick={handleUpload}>
-                Upload
-              </button>
-            </div>
-            <br />
-            <button className="btn btn-primary" onClick={handleSubmit}>
-              Upload
-            </button>
-            {error && <div className="text-red-700">{error}</div>}
+              <input
+                type="text"
+                placeholder="Description"
+                className="input input-bordered w-full"
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered w-full"
+                  onChange={handleFileChange}
+                />
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleUpload}
+                >
+                  Upload
+                </button>
+              </div>
+              <button className="btn btn-primary">Create</button>
+              {error && <div className="text-red-700">{error}</div>}
+            </form>
             <div className="modal-action">
               <form method="dialog">
                 {/* if there is a button in form, it will close the modal */}
@@ -149,11 +164,30 @@ const PostList = () => {
       <br />
       <div className="grid gap-10">
         {posts.map((post: any) => (
-          <div className="bg-red-200 rounded-xl p-10" key={post.id}>
-            <h2>{post.name}</h2>
-            <p>{post.description}</p>
-            <p>Created At: {new Date(post.createdAt).toLocaleDateString()}</p>
-            <p>Total Comments: {post.totalComments}</p>
+          <div className="mx-auto flex gap-5 rounded-xl " key={post.id}>
+            <div className="">
+              <img
+                className="object-cover border min-w-96 max-w-96 min-h-96 max-h-96 rounded-lg"
+                src={post.imageUrl}
+                alt="img"
+              />
+              <br />
+              <div className="flex gap-2">
+                <button className="btn btn-primary">
+                  <BiUpvote />
+                </button>
+                <button className="btn btn-primary">
+                  <BiDownvote />
+                </button>
+              </div>
+            </div>
+            <div>
+              <h2>{post.name}</h2>
+              <p>{post.description}</p>
+              <p>Created At: {new Date(post.createdAt).toLocaleDateString()}</p>
+              <p>Total Comments: {post.totalComments}</p>
+              <button className="btn btn-primary">View Comments</button>
+            </div>
           </div>
         ))}
       </div>
