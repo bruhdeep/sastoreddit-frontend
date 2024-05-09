@@ -80,14 +80,12 @@ const PostList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(
-          "https://513a-27-34-49-238.ngrok-free.app/forum/list",
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "1",
-            },
-          }
-        );
+        const url = process.env.BASE_URL + "/forum/list";
+        const response = await fetch(url, {
+          headers: {
+            "ngrok-skip-browser-warning": "1",
+          },
+        });
         const data = await response.json();
         setPosts(data);
       } catch (error) {
