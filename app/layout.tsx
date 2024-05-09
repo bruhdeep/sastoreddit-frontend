@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 import Navbar from "@/components/Navbar";
 
@@ -20,7 +21,8 @@ export default function RootLayout({
     <html data-theme="winter" lang="en">
       <body className={inter.className}>
         <Navbar />
-        <main className="bg-base-100">{children}</main>
+        <Toaster position="top-center" />
+        <main className="bg-base-100 text-black">{children}</main>
       </body>
     </html>
   );

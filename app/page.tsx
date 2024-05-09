@@ -20,7 +20,7 @@ export default function Home() {
             <Link href={"/login"}>
               <button className="btn btn-primary mx-2">Login</button>
             </Link>
-            <Link href={"/posts"}>
+            <Link href={"/post"}>
               <button className="btn btn-primary mx-2">
                 Continue as guest
               </button>
