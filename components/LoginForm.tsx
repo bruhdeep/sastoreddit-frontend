@@ -52,11 +52,17 @@ const Login = () => {
 
         const userId = data.userID;
         const token = data.accessToken;
+        const role = data.role;
 
         Cookies.set("userId", userId);
         Cookies.set("accessToken", token);
+        Cookies.set("role", role);
 
-        router.push("/post");
+        if (role === "Admin") {
+          router.push("/admin");
+        } else {
+          router.push("/post");
+        }
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -64,8 +70,8 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen flex">
-      <div className="flex m-auto">
+    <div className="min-h-screen flex">
+      <div className="flex m-auto ">
         <div className="m-auto w-[80%] lg:w-[40rem]">
           <div className="text-center text-[3rem] font-extrabold">
             <span className="text-black">WELCOME </span>
@@ -92,7 +98,9 @@ const Login = () => {
             </button>
 
             {error && <div className="text-red-700">{error}</div>}
-
+            <Link className="text-right" href={"/register"}>
+              <span className="text-primary">Forgot Password?</span>
+            </Link>
             <Link className="text-right" href={"/register"}>
               Don't have an account?{" "}
               <span className="text-primary">Sign up</span>
@@ -100,12 +108,12 @@ const Login = () => {
           </form>
         </div>
       </div>
-      <div className="hidden lg:block w-[40%] bg-slate-400 m-3 rounded-xl overflow-hidden">
-        {/* <img
-          src="sakura.jpg"
+      <div className="hidden lg:block w-[40%] bg-slate-400 m-3 rounded-xl overflow-hidden h-[98]">
+        <img
+          src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Finvestorplace.com%2Fwp-content%2Fuploads%2F2022%2F05%2Freddit-1600.png&f=1&nofb=1&ipt=367d6c6cb4a7609c9765e364d9d9b3febd11b63950e581f3f8d725b398c758b5&ipo=images"
           alt="login image"
-          className="w-screen min-h-screen"
-        /> */}
+          className="w-screen object-cover h-full"
+        />
       </div>
     </div>
   );
