@@ -4,7 +4,7 @@
 import React from "react";
 import Link from "next/link";
 import { IoIosNotifications } from "react-icons/io";
-
+import CreatePost from "./CreatePost";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +26,7 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex-none">
+          {/* {Cookies.get("userId") && <CreatePost />} */}
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
