@@ -5,6 +5,10 @@ import { BiDownvote, BiUpvote } from "react-icons/bi";
 import Cookies from "js-cookie";
 import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
+import { TiThMenu } from "react-icons/ti";
+
+import { edit } from "@/utils/comment";
+import { upvote, downvote } from "@/utils/comment";
 
 interface Comment {
   commentId: string;
@@ -13,11 +17,14 @@ interface Comment {
   totalUpvotes: number;
   totalDownvotes: number;
   createdAt: string;
+  userId: string;
 }
 
 const Comment = ({ postId }: { postId: string }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [comment, setComment] = useState("");
+  const [newContent, setNewContent] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -36,7 +43,7 @@ const Comment = ({ postId }: { postId: string }) => {
     };
 
     fetchComments();
-  }, [postId]);
+  }, [postId, reloadKey]);
 
   const handleComment = async () => {
     try {
@@ -60,6 +67,29 @@ const Comment = ({ postId }: { postId: string }) => {
     }
   };
 
+  const handleUpvote = (commentId: string) => {
+    upvote(commentId);
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+    }, 2000);
+  };
+
+  const handleDownvote = (commentId: string) => {
+    downvote(commentId);
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+    }, 2000);
+  };
+
+  const handleEdit = async (commentId: string) => {
+    try {
+      await edit(commentId, newContent);
+      toast.success("Comment edited successfully");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="mx-auto rounded-xl w-[40rem]">
       <div className="flex gap-2">
@@ -77,16 +107,88 @@ const Comment = ({ postId }: { postId: string }) => {
       {comments.map((comment) => (
         <div className="" key={comment.commentId}>
           <p>{comment.content}</p>
+          <p>{comment.commentId}</p>
           <p>{formatDistanceToNow(new Date(comment.createdAt))}</p>
-          <div className="flex gap-2 items-center">
-            <button className="btn btn-primary rounded-full">
-              {comment.totalUpvotes}
-              <BiUpvote size={18} />
-            </button>
-            <button className="btn btn-primary rounded-full">
-              <BiDownvote size={18} />
-              {comment.totalDownvotes}
-            </button>
+          <div className="flex justify-between">
+            <div className="flex gap-2 items-center">
+              <button
+                onClick={() => handleUpvote(comment.commentId)}
+                className="btn btn-primary rounded-full"
+              >
+                {comment.totalUpvotes}
+                <BiUpvote size={18} />
+              </button>
+              <button
+                onClick={() => handleDownvote(comment.commentId)}
+                className="btn btn-primary rounded-full"
+              >
+                <BiDownvote size={18} />
+                {comment.totalDownvotes}
+              </button>
+            </div>
+            {Cookies.get("userId") === comment.userId && (
+              <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button" className="btn btn-ghost m-1">
+                  <TiThMenu />
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <button
+                      className="btn"
+                      onClick={() =>
+                        (
+                          document.getElementById(
+                            "editcomment"
+                          ) as HTMLDialogElement
+                        ).showModal()
+                      }
+                    >
+                      open modal
+                    </button>
+                    <div>
+                      <dialog
+                        id="editcomment"
+                        className="modal modal-bottom sm:modal-middle"
+                      >
+                        <div className="modal-box">
+                          <form className="flex flex-col gap-3">
+                            <input
+                              type="text"
+                              placeholder="Title"
+                              className="input input-bordered w-full"
+                              onChange={(e) => setNewContent(e.target.value)}
+                            />
+                            {comment.commentId}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleEdit(comment.commentId);
+                                console.log(comment.commentId);
+                              }}
+                              className="btn btn-primary"
+                            >
+                              Edit
+                            </button>
+                          </form>
+                          <div className="modal-action">
+                            <form method="dialog">
+                              {/* if there is a button in form, it will close the modal */}
+                              <button className="btn">Close</button>
+                            </form>
+                          </div>
+                        </div>
+                      </dialog>
+                    </div>
+                  </li>
+                  <li>
+                    <a>Delete</a>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
           <div className="divider"></div>
         </div>

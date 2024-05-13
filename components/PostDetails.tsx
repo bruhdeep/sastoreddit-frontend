@@ -47,7 +47,6 @@ const PostDetails = ({ postId }: { postId: string }) => {
         setPost(data);
         setUpvotes(data.totalUpvotes);
         setDownvotes(data.totalDownvotes);
-        console.log(post);
       } catch (error) {
         console.error("Error:", error);
       }

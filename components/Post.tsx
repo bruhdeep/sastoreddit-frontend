@@ -10,8 +10,6 @@ import { BiUpvote, BiDownvote, BiComment } from "react-icons/bi";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
-  const [hasUpvoted, setHasUpvoted] = useState(false);
-  const [hasDownvoted, setHasDownvoted] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
   const handleUpvote = (postId: string) => {
@@ -53,7 +51,10 @@ const PostList = () => {
       <div className="grid gap-10">
         {posts.map((post: any) => (
           <div className="mx-auto rounded-xl w-[40rem]" key={post.id}>
-            <p className="text-xl font-bold">{post.name}</p>
+            <div className="flex gap-2 items-baseline">
+              <p className="text-2xl font-bold">{post.name}</p>
+              <p className="text-sm">{formatDistanceToNow(new Date(post.createdAt))} ago</p>
+            </div>
             {post.imageUrl ? (
               <img
                 className="object-cover border min-w-full max-w-full min-h-96 max-h-96 rounded-lg"
@@ -84,8 +85,6 @@ const PostList = () => {
                 </button>
               </Link>
             </div>
-            <p>{formatDistanceToNow(new Date(post.createdAt))} ago</p>
-            <p>Total Comments: {post.totalComments}</p>
             <div className="divider"></div>
           </div>
         ))}
