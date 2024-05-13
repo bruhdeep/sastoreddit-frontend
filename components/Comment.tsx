@@ -147,16 +147,16 @@ const Comment = ({ postId }: { postId: string }) => {
                       onClick={() =>
                         (
                           document.getElementById(
-                            "editcomment"
+                            `editcomment-${comment.commentId}`
                           ) as HTMLDialogElement
                         ).showModal()
                       }
                     >
-                      open modal
+                      Edit
                     </button>
                     <div>
                       <dialog
-                        id="editcomment"
+                        id={`editcomment-${comment.commentId}`}
                         className="modal modal-bottom sm:modal-middle"
                       >
                         <div className="modal-box">

@@ -26,34 +26,56 @@ const PostList = () => {
     }, 2000);
   };
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const url = process.env.BASE_URL + "/forum/list";
-        const response = await fetch(url, {
-          headers: {
-            "ngrok-skip-browser-warning": "1",
-          },
-        });
-        const data = await response.json();
-        setPosts(data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
+  const fetchPosts = async (url: string) => {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "ngrok-skip-browser-warning": "1",
+        },
+      });
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
-    fetchPosts();
+  useEffect(() => {
+    fetchPosts(process.env.BASE_URL + "/forum/list");
   }, [reloadKey]);
+
+  const handleRecentPosts = () => {
+    fetchPosts(process.env.BASE_URL + "/forum/list");
+  };
+
+  const handleRandomPosts = () => {
+    fetchPosts(process.env.BASE_URL + "/forum/Randi");
+  };
+
+  const handlePopularPosts = () => {
+    fetchPosts(process.env.BASE_URL + "/forum/popular");
+  };
 
   return (
     <div key={reloadKey} className="">
       <br />
+      <button onClick={handleRecentPosts} className="btn btn-primary">
+        Load Recent Posts
+      </button>
+      <button onClick={handleRandomPosts} className="btn btn-primary">
+        Load Random Posts
+      </button>
+      <button onClick={handlePopularPosts} className="btn btn-primary">
+        Load Popular Posts
+      </button>
       <div className="grid gap-10">
         {posts.map((post: any) => (
           <div className="mx-auto rounded-xl w-[40rem]" key={post.id}>
             <div className="flex gap-2 items-baseline">
               <p className="text-2xl font-bold">{post.name}</p>
-              <p className="text-sm">{formatDistanceToNow(new Date(post.createdAt))} ago</p>
+              <p className="text-sm">
+                {formatDistanceToNow(new Date(post.createdAt))} ago
+              </p>
             </div>
             {post.imageUrl ? (
               <img
