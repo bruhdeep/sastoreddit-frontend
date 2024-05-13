@@ -1,13 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
-import ManageUsers from "@/components/ManageUsers";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+
 import Top from "@/components/Top";
+import TopBloggers from "@/components/TopBloggers";
 import AddAdmin from "@/components/AddAdmin";
 import AdminDashboard from "@/components/AdminDashboard";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("admindashboard");
+  const router = useRouter();
+
+  useEffect(() => {
+    const role = Cookies.get("role");
+    if (role !== "Admin") {
+      router.push("/post");
+    }
+  }, []);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -17,8 +28,8 @@ const Admin = () => {
     switch (activeTab) {
       case "admindashboard":
         return <AdminDashboard />;
-      case "manageUsers":
-        return <ManageUsers />;
+      case "topuser":
+        return <TopBloggers />;
       case "top":
         return <Top />;
       case "addadmin":
@@ -60,7 +71,19 @@ const Admin = () => {
             } outline-none`}
             onClick={() => handleTabChange("top")}
           >
-            Top
+            Top Forums
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
+            className={`flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all ${
+              activeTab === "top"
+                ? "bg-blue-50 bg-opacity-80 text-blue-900"
+                : "hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900"
+            } outline-none`}
+            onClick={() => handleTabChange("topuser")}
+          >
+            Top Users
           </div>
           <div
             role="button"

@@ -29,7 +29,7 @@ export default function Top() {
     fetchTopForums();
   }, [month]);
 
-  const handleNumberChange = (selectedNumber: number) => {
+  const handleNumberChange = (selectedNumber: number | null) => {
     setMonth(selectedNumber);
   };
 
@@ -37,6 +37,14 @@ export default function Top() {
     <div className="flex flex-col items-center">
       <div className="mt-4 flex justify-center w-[70%]">
         <div className="flex space-x-6">
+          <button
+            className={`btn text-black ${
+              month === null ? "bg-indigo-300" : "bg-white"
+            } hover:bg-indigo-300`}
+            onClick={() => handleNumberChange(null)}
+          >
+            All Time
+          </button>
           {Array.from({ length: 12 }, (_, i) => i + 1).map((number) => (
             <button
               key={number}

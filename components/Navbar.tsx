@@ -22,6 +22,7 @@ const Navbar = () => {
   const handleLogout = () => {
     Cookies.remove("userId");
     Cookies.remove("accessToken");
+    Cookies.remove("role");
     router.push("/login");
   };
 
