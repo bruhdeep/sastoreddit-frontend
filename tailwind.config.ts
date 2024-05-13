@@ -13,6 +13,9 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      boxShadow: {
+        glow: '0 0 3px rgba(255, 204, 0, 0.5), 0 0 6px rgba(255, 204, 0, 0.5), 0 0 9px rgba(255, 204, 0, 0.5), 0 0 12px rgba(255, 204, 0, 0.5), 0 0 15px rgba(255, 204, 0, 0.5)',
+      },
     },
   },
   plugins: [require("daisyui")],
