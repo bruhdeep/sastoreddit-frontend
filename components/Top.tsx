@@ -22,11 +22,16 @@ export default function Top() {
 
   useEffect(() => {
     const fetchTopForums = async () => {
-      let url = "https://localhost:7178/admin/top-forums";
+      let url = process.env.BASE_URL + "/admin/top-forums";
       if (month) {
         url += `?month=${month}`;
       }
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "ngrok-skip-browser-warning": "1",
+        },
+      });
       const data = await response.json();
       if (typeof data === "string") {
         console.log(data);
@@ -37,11 +42,16 @@ export default function Top() {
     };
 
     const fetchTopBloggers = async () => {
-      let url = "https://localhost:7178/admin/top-bloggers";
+      let url = process.env.BASE_URL + "/admin/top-bloggers";
       if (month) {
         url += `?month=${month}`;
       }
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "ngrok-skip-browser-warning": "1",
+        },
+      });
       const data = await response.json();
       setTopBloggers(data);
     };

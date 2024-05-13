@@ -20,11 +20,16 @@ export default function Dashboard() {
   const [month, setMonth] = useState(new Date().getMonth() + 1); // Default to current month
 
   const fetchDashboardData = () => {
-    let url = "https://localhost:7178/admin/dashboard";
+    let url = process.env.BASE_URL + "/admin/dashboard";
     if (month) {
       url += `?month=${month}`;
     }
-    fetch(url)
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "1",
+      },
+    })
       .then((response) => response.text()) // Use .text() instead of .json()
       .then((data) => {
         try {

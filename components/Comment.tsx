@@ -65,19 +65,22 @@ const Comment = ({ postId }: { postId: string }) => {
     } catch (error) {
       console.error(error);
     }
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1);
+    }, 2000);
   };
 
   const handleUpvote = (commentId: string) => {
     upvote(commentId);
     setTimeout(() => {
-      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+      setReloadKey((prevKey) => prevKey + 1);
     }, 2000);
   };
 
   const handleDownvote = (commentId: string) => {
     downvote(commentId);
     setTimeout(() => {
-      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+      setReloadKey((prevKey) => prevKey + 1);
     }, 2000);
   };
 
@@ -88,6 +91,9 @@ const Comment = ({ postId }: { postId: string }) => {
     } catch (error) {
       console.error(error);
     }
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1);
+    }, 2000);
   };
 
   return (
