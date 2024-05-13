@@ -8,7 +8,7 @@ export async function upvote(postId: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      userId: "6b4813d4-2965-4220-ac50-06ebcc251751",
+      userId: Cookies.get("userId"),
       isUpvote: true,
     }),
   });

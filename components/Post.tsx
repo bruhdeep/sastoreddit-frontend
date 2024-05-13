@@ -3,12 +3,30 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { upvote, downvote } from "@/utils/vote";
 
 import { formatDistanceToNow } from "date-fns";
 import { BiUpvote, BiDownvote, BiComment } from "react-icons/bi";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
+  const [hasUpvoted, setHasUpvoted] = useState(false);
+  const [hasDownvoted, setHasDownvoted] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const handleUpvote = (postId: string) => {
+    upvote(postId);
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+    }, 2000);
+  };
+
+  const handleDownvote = (postId: string) => {
+    downvote(postId);
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+    }, 2000);
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -27,10 +45,10 @@ const PostList = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [reloadKey]);
 
   return (
-    <div className="">
+    <div key={reloadKey} className="">
       <br />
       <div className="grid gap-10">
         {posts.map((post: any) => (
@@ -45,11 +63,17 @@ const PostList = () => {
             ) : null}
             <p>{post.description}</p>
             <div className="flex gap-2">
-              <button className="btn btn-primary rounded-full">
+              <button
+                onClick={() => handleUpvote(post.id)}
+                className="btn btn-primary rounded-full"
+              >
                 {post.totalUpvotes}
                 <BiUpvote size={18} />
               </button>
-              <button className="btn btn-primary rounded-full">
+              <button
+                onClick={() => handleDownvote(post.id)}
+                className="btn btn-primary rounded-full"
+              >
                 <BiDownvote size={18} />
                 {post.totalDownvotes}
               </button>

@@ -11,46 +11,27 @@ interface Post {
   description: string;
   totalUpvotes: number;
   totalDownvotes: number;
-  totalComments: number;  
+  totalComments: number;
 }
 
 const PostDetails = ({ postId }: { postId: string }) => {
   const [post, setPost] = useState<Post | null>(null);
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
-  const [hasUpvoted, setHasUpvoted] = useState(false);
-  const [hasDownvoted, setHasDownvoted] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const handleUpvote = () => {
-
-    setIsDisabled(true);
-    setTimeout(() => {
-      setIsDisabled(false);
-    }, 5000);
     upvote(postId);
-    if (hasUpvoted) {
-      setUpvotes((prevUpvotes) => prevUpvotes - 1);
-      setHasUpvoted(false);
-    } else {
-      setUpvotes((prevUpvotes) => prevUpvotes + 1);
-      setHasUpvoted(true);
-    }
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+    }, 2000);
   };
 
   const handleDownvote = () => {
-    setIsDisabled(true);
-    setTimeout(() => {
-      setIsDisabled(false);
-    }, 5000);
     downvote(postId);
-    if (hasDownvoted) {
-      setDownvotes((prevDownvotes) => prevDownvotes - 1);
-      setHasDownvoted(false);
-    } else {
-      setDownvotes((prevDownvotes) => prevDownvotes + 1);
-      setHasDownvoted(true);
-    }
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
+    }, 2000);
   };
 
   useEffect(() => {
@@ -73,15 +54,15 @@ const PostDetails = ({ postId }: { postId: string }) => {
     };
 
     fetchPost();
-  }, [postId]);
+  }, [postId, reloadKey]);
 
   if (!post) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="mx-auto rounded-xl w-[40rem]">
-      <p className="text-xl font-bold">{post.name}</p>
+    <div key={reloadKey} className="mx-auto rounded-xl w-[40rem]">
+      <p className="text-3xl font-bold">{post.name}</p>
       {post.imageUrl ? (
         <img
           className="object-cover border min-w-full max-w-full min-h-96 max-h-96 rounded-lg"
@@ -91,24 +72,19 @@ const PostDetails = ({ postId }: { postId: string }) => {
       ) : null}
       <p>{post.description}</p>
       <div className="flex gap-2">
-        <button
-          onClick={handleUpvote}
-          className="btn btn-primary rounded-full"
-          disabled={isDisabled}
-        >
+        <button onClick={handleUpvote} className="btn btn-primary rounded-full">
           {upvotes}
           <BiUpvote size={18} />
         </button>
         <button
           onClick={handleDownvote}
           className="btn btn-primary rounded-full"
-          disabled={isDisabled}
         >
           <BiDownvote size={18} />
           {downvotes}
         </button>
       </div>
-      <div className="divider"></div> 
+      <div className="divider"></div>
     </div>
   );
 };

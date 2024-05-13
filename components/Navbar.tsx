@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { IoIosNotifications } from "react-icons/io";
 import CreatePost from "./CreatePost";
@@ -9,7 +9,15 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const userId = Cookies.get("userId");
+    if (userId != null) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogout = () => {
     Cookies.remove("userId");
@@ -26,7 +34,7 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex-none">
-          {/* {Cookies.get("userId") && <CreatePost />} */}
+          {isAuthenticated && <CreatePost />}
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
