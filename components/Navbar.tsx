@@ -30,7 +30,9 @@ const Navbar = () => {
       <div className="navbar bg-base-100">
         <div className="flex-1">
           <Link href={"/"}>
-            <div className="btn btn-ghost text-xl">sastoREDDIT</div>
+            <div className="btn btn-ghost text-xl">
+              <img className="h-full" src="logo.png" alt="" />
+            </div>
           </Link>
         </div>
         <div className="flex-none">

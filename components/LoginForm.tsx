@@ -3,10 +3,15 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
 const Login = () => {
+  const user = Cookies.get("userId");
+  if (user) {
+    redirect("/post");
+  }
+
   const router = useRouter();
   const [error, setError] = useState("");
 
