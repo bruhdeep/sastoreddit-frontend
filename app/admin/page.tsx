@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ManageUsers from "@/components/ManageUsers";
-// import Top from "@/components/Top";
+import Top from "@/components/Top";
 import AddAdmin from "@/components/AddAdmin";
 import AdminDashboard from "@/components/AdminDashboard";
 
@@ -19,8 +19,8 @@ const Admin = () => {
         return <AdminDashboard />;
       case "manageUsers":
         return <ManageUsers />;
-      // case "top":
-      //   return <Top />;
+      case "top":
+        return <Top />;
       case "addadmin":
         return <AddAdmin />;
 

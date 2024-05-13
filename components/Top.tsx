@@ -1,86 +1,86 @@
-// import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-// const Top = () => {
-//   const [topPosts, setTopPosts] = useState([]);
-//   const [topBloggers, setTopBloggers] = useState([]);
-//   const [selectedMonth, setSelectedMonth] = useState("");
+import TopBloggers from "./TopBloggers";
+import TopForums from "./TopForums";
 
-//   useEffect(() => {
-//     // Fetch top 10 blog posts of all time
-//     fetchTopPosts();
+interface Forum {
+  name: string;
+  description: string;
+  popularity: number;
+}
 
-//     // Fetch top 10 bloggers of all time
-//     fetchTopBloggers();
-//   }, []);
+interface Blogger {
+  userName: string;
+  popularity: number;
+}
 
-//   useEffect(() => {
-//     if (selectedMonth) {
-//       // Fetch top 10 blog posts of specific month
-//       fetchTopPostsByMonth(selectedMonth);
-//     }
-//   }, [selectedMonth]);
+export default function Top() {
+  const [month, setMonth] = useState<number | null>(null);
+  const [topForums, setTopForums] = useState<Forum[]>([]);
+  const [topBloggers, setTopBloggers] = useState<Blogger[]>([]);
+  const [activeTab, setActiveTab] = useState<"forums" | "bloggers">("forums");
 
-//   const fetchTopPosts = () => {
-//     // Replace the following line with your test data
-//     const topPostsData: { id: string; title: string }[] = [
-//       { id: "1", title: "Post 1" },
-//       { id: "2", title: "Post 2" },
-//       // Add more test data here
-//     ];
+  useEffect(() => {
+    const fetchTopForums = async () => {
+      let url = "https://localhost:7178/admin/top-forums";
+      if (month) {
+        url += `?month=${month}`;
+      }
+      const response = await fetch(url);
+      const data = await response.json();
+      if (typeof data === "string") {
+        console.log(data);
+        setTopForums([]);
+      } else {
+        setTopForums(data);
+      }
+    };
 
-//     setTopPosts(topPostsData);
-//   };
+    const fetchTopBloggers = async () => {
+      let url = "https://localhost:7178/admin/top-bloggers";
+      if (month) {
+        url += `?month=${month}`;
+      }
+      const response = await fetch(url);
+      const data = await response.json();
+      setTopBloggers(data);
+    };
 
-//   const fetchTopBloggers = () => {
-//     // Replace the following line with your test data
-//     const topBloggersData = [
-//       { id: "1", name: "Blogger 1" },
-//       { id: "2", name: "Blogger 2" },
-//       // Add more test data here
-//     ];
+    fetchTopForums();
+    fetchTopBloggers();
+  }, [month]);
 
-//     setTopBloggers(topBloggersData);
-//   };
+  const handleNumberChange = (selectedNumber: number) => {
+    setMonth(selectedNumber);
+  };
 
-//   const fetchTopPostsByMonth = (month: string) => {
-//     // Replace the following line with your test data
-//     const topPostsData: { id: string; title: string }[] = [
-//       { id: "1", title: "Post 1" },
-//       { id: "2", title: "Post 2" },
-//       // Add more test data here
-//     ];
-
-//     setTopPosts(topPostsData);
-//   };
-
-//   return (
-//     <div>
-//       <h2>Top 10 Blog Posts</h2>
-//       <ul>
-//         {topPosts.map((post: { id: string; title: string }) => (
-//           <li key={post.id}>{post.title}</li>
-//         ))}
-//       </ul>
-
-//       <h2>Top 10 Bloggers</h2>
-//       <ul>
-//         {topBloggers.map((blogger: { id: string; name: string }) => (
-//           <li key={blogger.id}>{blogger.name}</li>
-//         ))}
-//       </ul>
-
-//       <h2>Select Month</h2>
-//       <select
-//         value={selectedMonth}
-//         onChange={(e) => setSelectedMonth(e.target.value)}
-//       >
-//         <option value="">All Time</option>
-//         <option value="January">January</option>
-//         <option value="February">February</option>
-//         {/* Add more month options here */}
-//       </select>
-//     </div>
-//   );
-// };
-
-// export default Top;
+  return (
+    <div className="flex flex-col items-center">
+      <div className="mt-4 flex justify-between w-[70%]">
+        <div className="flex space-x-4">
+          {Array.from({ length: 12 }, (_, i) => i + 1).map((number) => (
+            <button
+              key={number}
+              className={`btn text-black ${
+                month === number ? "bg-indigo-300" : "bg-white"
+              } hover:bg-indigo-300`}
+              onClick={() => handleNumberChange(number)}
+            >
+              {number}
+            </button>
+          ))}
+        </div>
+        <button
+          className={`btn text-black ${
+            activeTab === "bloggers" ? "bg-indigo-300" : "bg-white"
+          } hover:bg-indigo-300`}
+          onClick={() => setActiveTab("bloggers")}
+        >
+          Top Bloggers
+        </button>
+      </div>
+      {activeTab === "forums" && <TopForums topForums={topForums} />}
+      {activeTab === "bloggers" && <TopBloggers topBloggers={topBloggers} />}
+    </div>
+  );
+}
