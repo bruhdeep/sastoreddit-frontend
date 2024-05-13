@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { upvote, downvote } from "@/utils/vote";
+import { upvote, downvote } from "@/utils/post";
 
 import { formatDistanceToNow } from "date-fns";
 import { BiUpvote, BiDownvote, BiComment } from "react-icons/bi";
@@ -77,13 +77,15 @@ const PostList = () => {
                 {formatDistanceToNow(new Date(post.createdAt))} ago
               </p>
             </div>
-            {post.imageUrl ? (
-              <img
-                className="object-cover border min-w-full max-w-full min-h-96 max-h-96 rounded-lg"
-                src={post.imageUrl}
-                alt="img"
-              />
-            ) : null}
+            <Link href={`/post/${post.id}`}>
+              {post.imageUrl ? (
+                <img
+                  className="object-cover border min-w-full max-w-full min-h-96 max-h-96 rounded-lg"
+                  src={post.imageUrl}
+                  alt="img"
+                />
+              ) : null}
+            </Link>
             <p>{post.description}</p>
             <div className="flex gap-2">
               <button

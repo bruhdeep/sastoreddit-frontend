@@ -11,28 +11,32 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     const userId = Cookies.get("userId");
     if (userId != null) {
       setIsAuthenticated(true);
     }
-  }, []);
+  }, [reloadKey]);
 
   const handleLogout = () => {
     Cookies.remove("userId");
     Cookies.remove("accessToken");
     Cookies.remove("role");
     router.push("/login");
+    setTimeout(() => {
+      setReloadKey((prevKey) => prevKey + 1);
+    }, 2000);
   };
 
   return (
-    <div className="text-black">
+    <div key={reloadKey} className="text-black">
       <div className="navbar bg-base-100">
         <div className="flex-1">
           <Link href={"/"}>
             <div className="btn btn-ghost text-xl">
-              <img className="h-full" src="logo.png" alt="" />
+              <p>sastoREDDIT</p>
             </div>
           </Link>
         </div>
@@ -78,15 +82,27 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <li>
-                <a className="justify-between">Profile</a>
-              </li>
-
-              <li>
-                <button onClick={handleLogout} className="justify-between">
-                  Logout
-                </button>
-              </li>
+              {isAuthenticated && (
+                <li>
+                  <Link href={"/profile"}>
+                    <div className="justify-between">Profile</div>
+                  </Link>
+                </li>
+              )}
+              {isAuthenticated && (
+                <li>
+                  <button onClick={handleLogout} className="justify-between">
+                    Logout
+                  </button>
+                </li>
+              )}
+              {!isAuthenticated && (
+                <li>
+                  <Link href={"/login"}>
+                    <div className="justify-between">Login</div>
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>

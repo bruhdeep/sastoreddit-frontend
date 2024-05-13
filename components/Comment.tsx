@@ -166,6 +166,7 @@ const Comment = ({ postId }: { postId: string }) => {
                               placeholder="Title"
                               className="input input-bordered w-full"
                               onChange={(e) => setNewContent(e.target.value)}
+                              required
                             />
                             {comment.commentId}
                             <button
