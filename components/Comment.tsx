@@ -6,9 +6,8 @@ import Cookies from "js-cookie";
 import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import { TiThMenu } from "react-icons/ti";
-
-import { edit } from "@/utils/comment";
-import { upvote, downvote } from "@/utils/comment";
+import { upvote, downvote, remove, edit } from "@/utils/comment";
+import { useRouter } from "next/navigation";
 
 interface Comment {
   commentId: string;
@@ -25,6 +24,8 @@ const Comment = ({ postId }: { postId: string }) => {
   const [comment, setComment] = useState("");
   const [newContent, setNewContent] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  const userId = Cookies.get("userId");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -46,42 +47,54 @@ const Comment = ({ postId }: { postId: string }) => {
   }, [postId, reloadKey]);
 
   const handleComment = async () => {
-    try {
-      const response = await fetch(
-        process.env.BASE_URL +
-          `/add?forumId=${postId}&userId=${Cookies.get(
-            "userId"
-          )}&content=${comment}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      toast.success("Comment added successfully");
-    } catch (error) {
-      console.error(error);
+    if (!userId) {
+      router.push("/login");
+    } else {
+      try {
+        const response = await fetch(
+          process.env.BASE_URL +
+            `/add?forumId=${postId}&userId=${Cookies.get(
+              "userId"
+            )}&content=${comment}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+        toast.success("Comment added successfully");
+      } catch (error) {
+        console.error(error);
+      }
+      setTimeout(() => {
+        setReloadKey((prevKey) => prevKey + 1);
+      }, 2000);
     }
-    setTimeout(() => {
-      setReloadKey((prevKey) => prevKey + 1);
-    }, 2000);
   };
 
   const handleUpvote = (commentId: string) => {
-    upvote(commentId);
-    setTimeout(() => {
-      setReloadKey((prevKey) => prevKey + 1);
-    }, 2000);
+    if (!userId) {
+      router.push("/login");
+    } else {
+      upvote(commentId);
+      setTimeout(() => {
+        setReloadKey((prevKey) => prevKey + 1);
+      }, 2000);
+    }
   };
 
   const handleDownvote = (commentId: string) => {
-    downvote(commentId);
-    setTimeout(() => {
-      setReloadKey((prevKey) => prevKey + 1);
-    }, 2000);
+    if (!userId) {
+      router.push("/login");
+    } else {
+      downvote(commentId);
+      setTimeout(() => {
+        setReloadKey((prevKey) => prevKey + 1);
+      }, 2000);
+    }
   };
 
   const handleEdit = async (commentId: string) => {
@@ -94,6 +107,22 @@ const Comment = ({ postId }: { postId: string }) => {
     setTimeout(() => {
       setReloadKey((prevKey) => prevKey + 1);
     }, 2000);
+  };
+
+  const handleRemove = (postId: string) => {
+    remove(postId);
+  };
+
+  const confirmAndRemove = (postId: string) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
+    if (isConfirmed) {
+      handleRemove(postId);
+      setTimeout(() => {
+        setReloadKey((prevKey) => prevKey + 1);
+      }, 2000);
+    }
   };
 
   return (
@@ -191,7 +220,12 @@ const Comment = ({ postId }: { postId: string }) => {
                     </div>
                   </li>
                   <li>
-                    <a>Delete</a>
+                    <button
+                      onClick={() => confirmAndRemove(comment.commentId)}
+                      className="btn btn-ghost"
+                    >
+                      Delete
+                    </button>
                   </li>
                 </ul>
               </div>

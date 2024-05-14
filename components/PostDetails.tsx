@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { BiUpvote, BiDownvote } from "react-icons/bi";
 import { upvote, downvote } from "@/utils/post";
 import { TiThMenu } from "react-icons/ti";
-
+import Cookies from "js-cookie";
 import { edit, remove } from "@/utils/post";
 import { useRouter } from "next/navigation";
 
@@ -16,6 +16,7 @@ interface Post {
   totalUpvotes: number;
   totalDownvotes: number;
   totalComments: number;
+  userId: string;
 }
 
 const PostDetails = ({ postId }: { postId: string }) => {
@@ -91,9 +92,11 @@ const PostDetails = ({ postId }: { postId: string }) => {
         <p className="text-3xl font-bold">{post.name}</p>
         <div>
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost m-1">
-              <TiThMenu />
-            </div>
+            {post.userId === Cookies.get("userId") && (
+              <div tabIndex={0} role="button" className="btn btn-ghost m-1">
+                <TiThMenu />
+              </div>
+            )}
             <ul
               tabIndex={0}
               className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"

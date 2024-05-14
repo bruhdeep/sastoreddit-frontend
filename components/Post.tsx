@@ -7,23 +7,35 @@ import { upvote, downvote } from "@/utils/post";
 
 import { formatDistanceToNow } from "date-fns";
 import { BiUpvote, BiDownvote, BiComment } from "react-icons/bi";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [reloadKey, setReloadKey] = useState(0);
+  const userId = Cookies.get("userId");
+  const router = useRouter();
 
   const handleUpvote = (postId: string) => {
-    upvote(postId);
-    setTimeout(() => {
-      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
-    }, 2000);
+    if (!userId) {
+      router.push("/login");
+    } else {
+      upvote(postId);
+      setTimeout(() => {
+        setReloadKey((prevKey) => prevKey + 1);
+      }, 2000);
+    }
   };
 
   const handleDownvote = (postId: string) => {
-    downvote(postId);
-    setTimeout(() => {
-      setReloadKey((prevKey) => prevKey + 1); // This will trigger the component to re-render after 2 seconds
-    }, 2000);
+    if (!userId) {
+      router.push("/login");
+    } else {
+      downvote(postId);
+      setTimeout(() => {
+        setReloadKey((prevKey) => prevKey + 1);
+      }, 2000);
+    }
   };
 
   const fetchPosts = async (url: string) => {
@@ -58,17 +70,18 @@ const PostList = () => {
 
   return (
     <div key={reloadKey} className="">
-      <br />
-      <button onClick={handleRecentPosts} className="btn btn-primary">
-        Load Recent Posts
-      </button>
-      <button onClick={handleRandomPosts} className="btn btn-primary">
-        Load Random Posts
-      </button>
-      <button onClick={handlePopularPosts} className="btn btn-primary">
-        Load Popular Posts
-      </button>
-      <div className="grid gap-10">
+      <div className="grid gap-5">
+        <div className="mx-auto flex gap-2">
+          <button onClick={handleRecentPosts} className="btn btn-primary">
+            Load Recent Posts
+          </button>
+          <button onClick={handleRandomPosts} className="btn btn-primary">
+            Load Random Posts
+          </button>
+          <button onClick={handlePopularPosts} className="btn btn-primary">
+            Load Popular Posts
+          </button>
+        </div>
         {posts.map((post: any) => (
           <div className="mx-auto rounded-xl w-[40rem]" key={post.id}>
             <div className="flex gap-2 items-baseline">
